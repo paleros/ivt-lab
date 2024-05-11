@@ -9,32 +9,65 @@ import static org.mockito.Mockito.*;
 public class GT4500Test {
 
   private GT4500 ship;
+  private TorpedoStoreInterface mockPrimaryTorpedoStore;
+  private TorpedoStoreInterface mockSecondaryTorpedoStore;
 
   @BeforeEach
   public void init(){
-    this.ship = new GT4500();
+    mockPrimaryTorpedoStore = mock(TorpedoStoreInterface.class);
+    mockSecondaryTorpedoStore = mock(TorpedoStoreInterface.class);
+
+    this.ship = new GT4500(mockPrimaryTorpedoStore, mockSecondaryTorpedoStore);
   }
 
   @Test
   public void fireTorpedo_Single_Success(){
-    // Arrange
 
-    // Act
-    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+    when(mockPrimaryTorpedoStore.fire(1)).thenReturn(true);
+    
+    ship.fireTorpedo(FiringMode.SINGLE);
 
-    // Assert
-    assertEquals(true, result);
+    verify(mockPrimaryTorpedoStore).fire(1);
+
   }
 
   @Test
   public void fireTorpedo_All_Success(){
-    // Arrange
+  
+    when(mockPrimaryTorpedoStore.fire(1)).thenReturn(true);
+    when(mockSecondaryTorpedoStore.fire(1)).thenReturn(true);
 
-    // Act
-    boolean result = ship.fireTorpedo(FiringMode.ALL);
+    
+    ship.fireTorpedo(FiringMode.ALL);
 
-    // Assert
-    assertEquals(true, result);
+    verify(mockPrimaryTorpedoStore).fire(1);
+    verify(mockSecondaryTorpedoStore).fire(1);
+
+  }
+
+  @Test
+  public void fireTorpedo_Single_11(){
+    ship.fireTorpedo(FiringMode.SINGLE);
+
+    verify(mockPrimaryTorpedoStore).fire(1);
+    verify(mockSecondaryTorpedoStore, never()).fire(1);
+
+  }
+  @Test
+  public void fireTorpedo_Single(){
+    for (int i = 0; i <= 15; i++){
+    ship.fireTorpedo(FiringMode.SINGLE);
+
+    }
+  
+  }
+  @Test
+  public void fireTorpedo_All(){
+    for (int i = 0; i <= 15; i++){
+    ship.fireTorpedo(FiringMode.ALL);
+
+    }
+  
   }
 
 }
